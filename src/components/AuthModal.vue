@@ -4,7 +4,7 @@ import {useUserStore} from "../stores/user"
 import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore()
-const  {errorMessage, loading} = storeToRefs(userStore)
+const  {errorMessage, loading, user} = storeToRefs(userStore)
 const props = defineProps(['isLogIn'])
 const open = ref(false);
 
@@ -17,12 +17,22 @@ const showModal = () => {
   open.value = true;
 };
 
-const handleOk = (e) => {
-  userStore.handleSignup(userCredentials)
+const handleOk = async (e) => {
+  await userStore.handleSignup(userCredentials)
+  if (user.value) {
+    open.value = false
+    clearUserCredentials()
+  }
 };
 
+const clearUserCredentials = () => {
+  userCredentials.email = ""
+    userCredentials.password = ""
+    userCredentials.username = ""
+    userStore.clearErrorMessage()
+}
 const handleCancel = () => {
-  userStore.clearErrorMessage()
+  clearUserCredentials()
   open.value = false
 }
 const title = props.isLogIn ? 'Sign In' : 'Sign Up'

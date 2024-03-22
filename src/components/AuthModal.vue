@@ -15,10 +15,20 @@ const userCredentials = reactive({
 })
 const showModal = () => {
   open.value = true;
+  
 };
 
 const handleOk = async (e) => {
-  await userStore.handleSignup(userCredentials)
+  if (props.isLogIn) {
+    console.log("HJERE")
+    await userStore.handleLogin({
+      password: userCredentials.password,
+      email: userCredentials.email
+    })
+  } else {
+    await userStore.handleSignup(userCredentials)
+  }
+ 
   if (user.value) {
     open.value = false
     clearUserCredentials()

@@ -7,6 +7,8 @@ export const useUserStore = defineStore('users', () => {
   const errorMessage = ref("")
   const loading = ref(false)
 
+  const loadingUser = ref(false)
+
   const validateEmail = (email) => {
     return String(email)
       .toLowerCase()
@@ -15,7 +17,44 @@ export const useUserStore = defineStore('users', () => {
       );
   };
 
-  const handleLogin = () => {}
+  const handleLogin = async (credentials) => {
+
+    const {email, password} = credentials
+      if (!validateEmail(email)) {
+      return errorMessage.value = "Email is invalid"
+    }
+
+    if (!password.length) {
+      return errorMessage.value = "Password cannot be empty"
+    }
+
+    loading.value = true
+    const {error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
+
+    if (error) {
+      loading.value = false
+      return errorMessage.value = error.message
+    }
+
+    const {data: existingUser} = await supabase
+    .from("users")
+    .select()
+    .eq('email', email)
+    .single()
+
+    user.value = {
+      email: existingUser.email,
+      username: existingUser.username,
+      id: existingUser.id
+    }
+
+    loading.value = false
+    errorMessage.value = ""
+   
+  }
 
   const handleSignup = async (credentials) => {
     const {email, password, username} = credentials;
@@ -28,10 +67,7 @@ export const useUserStore = defineStore('users', () => {
       return errorMessage.value = "Username is too short"
     }
 
-    // if (!validateEmail(email)) {
-    //   return errorMessage.value = "Email is invalid"
-    // }
-
+  
 
     loading.value = true
 
@@ -79,14 +115,40 @@ export const useUserStore = defineStore('users', () => {
 
   }
 
-  const handleLogout = () => {}
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    user.value = null
+  }
 
-  const getUser = () => {}
+  const getUser = async () => {
+    loadingUser.value = true
+    const {data} = await supabase.auth.getUser()
+
+    if (!data.user) {
+      loadingUser.value = false
+      return user.value = null
+    }
+    const { data: userWithEmail } = await supabase
+    .from("users")
+    .select()
+    .eq("email", data.user.email)
+    .single()
+    
+    
+    user.value = {
+      username: userWithEmail.username,
+      email: userWithEmail.email,
+      id: userWithEmail.id
+    }
+
+    console.log("USER: ", user)
+    loadingUser.value = false
+  }
 
   const clearErrorMessage = () => {
     errorMessage.value = ""
   }
 
 
-  return { user, errorMessage, loading, handleLogin, handleSignup, handleLogout, getUser, clearErrorMessage }
+  return { user, errorMessage, loading, loadingUser, handleLogin, handleSignup, handleLogout, getUser, clearErrorMessage }
 })

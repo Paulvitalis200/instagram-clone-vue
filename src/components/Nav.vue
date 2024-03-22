@@ -3,10 +3,14 @@ import { RouterLink, useRouter } from 'vue-router'
 import Container from './Container.vue'
 import AuthModal from './AuthModal.vue';
 import {ref} from 'vue'
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
+const userStore = useUserStore()
+
+const { user, loadingUser } = storeToRefs(userStore)
 const router = useRouter()
 const searchUsername = ref('')
-const isAuthenticated = ref(false)
 const onSearch = () => {
      if (searchUsername.value.trim()) {
         router.push(`/profile/${searchUsername.value.trim()}`)
@@ -14,6 +18,9 @@ const onSearch = () => {
      }
 }
 
+const handleLogout = async () => {
+    await userStore.handleLogout()
+}
 
 </script>
 <template>
@@ -37,14 +44,17 @@ const onSearch = () => {
                 @search="onSearch"
                 />
             </div>
-       <div class="right-content" v-if="!isAuthenticated">
+            <div class="content" v-if="!loadingUser">
+                <div class="right-content" v-if="!user">
         <AuthModal :isLogIn="false"/>
         <AuthModal :isLogIn="true"/>
        </div>
        <div class="right-content" v-else>
         <a-button type="primary">Profile</a-button>
-        <a-button type="primary">Log Out</a-button>
+        <a-button type="primary" @click="handleLogout">Log Out</a-button>
        </div>
+    </div>
+      
    
     </div>
       </Container>
@@ -78,5 +88,10 @@ const onSearch = () => {
 
 .right-content button {
     margin-left: 10px;
+}
+
+.content {
+    display: flex;
+    align-items: center;
 }
 </style>

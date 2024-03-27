@@ -3,6 +3,13 @@
 import Container from '@/components/Container.vue';
 import UserBar from '../components/UserBar.vue'
 import ImageGallery from './ImageGallery.vue';
+import { ref } from "vue"
+
+const posts = ref([])
+
+const addNewPost = (post) => {
+    posts.value.unshift(post)
+}
 </script>
 <template>
 <Container>
@@ -11,16 +18,10 @@ import ImageGallery from './ImageGallery.vue';
             posts: 4,
             following: 100,
             followers: 50
-        }"/>
+        }"
+        :addNewPost="addNewPost"/>
        <ImageGallery 
-        :posts="[{
-            id: 1,
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfVMx1h1y8SyO7FaxEOGXxRlKFpKGPzyVdLA&s'
-        },
-        {
-            id: 2,
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIWROdLDes20YCR-C9FdSLF7FLOMkb4iZgBQ&s'
-        }]"
+        :posts="posts"
        />
     </div>
 </Container>

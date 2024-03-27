@@ -7,7 +7,7 @@
         <img 
             v-for="post in props.posts"
             :key="post.id" 
-            :src="post.image" 
+            :src="`https://tqoneqhlvignvfrwrzvi.supabase.co/storage/v1/object/public/images/${post.url}`"
             />
     </div>
 </template>

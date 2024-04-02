@@ -2,6 +2,7 @@
 import {defineProps} from 'vue'
 import UploadPhotoModal from './UploadPhotoModal.vue';
 import { useRoute } from 'vue-router';
+import {supabase} from '../supabase'
 import { useUserStore} from '../stores/user'
 import { storeToRefs } from 'pinia';
 
@@ -12,13 +13,24 @@ const {user} = storeToRefs(userStore)
 const  { username: profileUsername } = route.params;
 
 const props = defineProps(['user', 'userInfo', 'addNewPost'])
+
+
+const followUser = async() => {
+    await  supabase.from("followers_following").insert({
+        follower_id: user.value.id,
+        following_id: props.user.id
+    })
+}
 </script>
 
 <template>
     <div class="userbar-container" v-if="props.user">
         <div class="top-content">
             <a-typography-title :level="2">{{ props.user.username }}</a-typography-title>
-            <UploadPhotoModal v-if="props.user && profileUsername == props.user.username" :addNewPost="addNewPost"/>
+            <div v-if="user">
+            <UploadPhotoModal v-if="profileUsername === user.username" :addNewPost="addNewPost"/>
+            <a-button v-else @click="followUser">Follow</a-button>
+        </div>
         </div>
         <div class="bottom-content">
             <a-typography-title :level="5">{{ props.userInfo.posts }} posts</a-typography-title>

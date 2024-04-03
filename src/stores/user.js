@@ -104,7 +104,6 @@ export const useUserStore = defineStore('users', () => {
     .eq('email', email)
     .single()
 
-    console.log(newUser)
     user.value = {
       id: newUser.id,
       email: newUser.email,
@@ -140,8 +139,6 @@ export const useUserStore = defineStore('users', () => {
       email: userWithEmail.email,
       id: userWithEmail.id
     }
-
-    console.log("USER: ", user)
     loadingUser.value = false
   }
 

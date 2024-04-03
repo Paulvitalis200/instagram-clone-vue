@@ -47,7 +47,6 @@ const handleOk = async (e) => {
 };
 
 const handleUploadChange = (e) => {
-    console.log(e)
     if (e.target.files[0]) {
         file.value = e.target.files[0]
     }

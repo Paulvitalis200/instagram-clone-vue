@@ -20,7 +20,6 @@ const showModal = () => {
 
 const handleOk = async (e) => {
   if (props.isLogIn) {
-    console.log("HJERE")
     await userStore.handleLogin({
       password: userCredentials.password,
       email: userCredentials.email

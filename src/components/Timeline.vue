@@ -1,38 +1,37 @@
 <script setup>
 import Container from './Container.vue';
-import Card from './Card.vue';
-const data = [
-    {
-        id: 1,
-        username: 'Pablo',
-        url: 'https://www.brides.com/thmb/sAyc2txVvmJXbZFoqZZPm3Vf5_Y=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/01selenagomez-f35b65bd620b43c4b038a19832967121.jpg',
-        caption: "I like pink"
-    },
-    {
-        id: 2,
-        username: 'The Weekend',
-        url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKPK759DQ5AtAP_iov8YE1X6rPlEeHenfGQe3cr-YdyQ&s',
-        caption: "Hello guys"
-    }
-]
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
+import Cards from './Cards.vue'
+import LoginMessage from './LoginMessage.vue'
+
+const userStore = useUserStore()
+
+const { user, loadingUser } = storeToRefs(userStore)
+
 </script>
 
 
 <template>
     <Container>
-        <div class="timeline-container">
-            <Card v-for="post in data" :key="post.id" :post="post"/>
-        </div>
-       
+        <div v-if="!loadingUser">
+    
+        <Cards  v-if="user"/>
+        <LoginMessage v-else />
+      
+    </div>
+       <div class="timeline-spinner" v-else>
+        <a-spin></a-spin>
+       </div>
     </Container>
 </template>
 
 <style scoped>
-.timeline-container {
-   
+
+.timeline-spinner {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 20px 0;
+    justify-content: center;
+    height: 90vh;
 }
 </style>

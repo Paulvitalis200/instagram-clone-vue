@@ -1,5 +1,4 @@
 <script setup>
-import {defineProps} from 'vue'
 import UploadPhotoModal from './UploadPhotoModal.vue';
 import { useRoute } from 'vue-router';
 import {supabase} from '../supabase'
